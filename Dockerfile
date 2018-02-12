@@ -6,4 +6,4 @@ RUN apt-get install git-core
 RUN    git clone https://github.com/adafruit/Adafruit_Python_DHT.git
 RUN    cd Adafruit_Python_DHT && python setup.py install
 
-CMD [ "python", "./temp-readingt.py" ]
+CMD [ "python", "./temp-reading.py" ]
