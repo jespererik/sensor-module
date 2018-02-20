@@ -24,9 +24,9 @@ sensorData = [
 
 @app.route('/Temp', methods=['GET'])
 def getTemp(): 
-    sensorData["data"] = int(getTemperature())
-    sensorData["dataType"] = "Temperature"
-    sensorData["timestamp"] = str(datetime.now())
+    sensorData['data'] = int(getTemperature())
+    sensorData['dataType'] = "Temperature"
+    sensorData['timestamp'] = str(datetime.now())
     return jsonify(sensorData)
     #return "Temp => " + str(getTemperature())
 
