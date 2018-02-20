@@ -10,7 +10,7 @@ app = Flask(__name__)
 #TODO 
 #Create dictionary 
 
-sensorData = [
+sensorData = 
     {
         'nodeID'    :1,
         'sensorID'  :1,
@@ -19,15 +19,14 @@ sensorData = [
         'data'      :1
 
     }
-]
 
 
 @app.route('/Temp', methods=['GET'])
 def getTemp(): 
-    sensorData['data'] = int(getTemperature())
+    sensorData['data'] = getTemperature()
     sensorData['dataType'] = "Temperature"
     sensorData['timestamp'] = str(datetime.now())
-    return jsonify(sensorData)
+    return jsonify('sensorData': sensorData)
     #return "Temp => " + str(getTemperature())
 
 
