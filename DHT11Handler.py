@@ -33,7 +33,8 @@ if __name__ == "__main__":
  
     myThread = threading.Thread(target = DHT11DataStream)
     myThread.start()
-   
+
+#Debugging   
     while True:
         print "***********************************"
         print("Sums     => Temp {} Humi {}").format(sum(humidity_array), sum(temperature_array))

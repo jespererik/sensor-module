@@ -1,16 +1,34 @@
-from flask import Flask
+from flask import Flask, jsonify
 from DHT11Handler import *
 import threading
+from datetime import datetime
 
-
-print "init: Begin"
 data_thread = threading.Thread(target = DHT11DataStream)
 data_thread.start()
 app = Flask(__name__)
-print "init: End"
 
-@app.route('/Temp')
-def getTemp(): return "Temp => " + str(getTemperature())
+#TODO 
+#Create dictionary 
+
+sensorData = [
+    {
+        'nodeID'    :1,
+        'sensorID'  :1,
+        'dataType'  :
+        'timestamp' : 
+        'data'      :
+
+    }
+]
+
+
+@app.route('/Temp', methods=['GET'])
+def getTemp(): 
+    sensorData["data"] = getTemp()
+    sensorData["dataType"] = "Temperature"
+    sensorData["timestamp"] = str(datetime.now())
+    return jsonify(sensorData)
+    #return "Temp => " + str(getTemperature())
 
 
 @app.route('/Humdidity')
