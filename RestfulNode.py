@@ -1,17 +1,16 @@
 from flask import Flask, jsonify
-from DHT11Handler import *
+#from DHT11Handler import *
 import threading
 from datetime import datetime
 
-data_thread = threading.Thread(target = DHT11DataStream)
-data_thread.start()
+#data_thread = threading.Thread(target = DHT11DataStream)
+#data_thread.start()
 app = Flask(__name__)
 
 #TODO 
 #Create dictionary 
 
-sensorData = 
-    {
+sensorData = {
         'nodeID'    :1,
         'sensorID'  :1,
         'dataType'  :1,
@@ -26,7 +25,7 @@ def getTemp():
     sensorData['data'] = getTemperature()
     sensorData['dataType'] = "Temperature"
     sensorData['timestamp'] = str(datetime.now())
-    return jsonify('sensorData': sensorData)
+    return jsonify(sensorData)
     #return "Temp => " + str(getTemperature())
 
 
