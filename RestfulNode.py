@@ -1,10 +1,8 @@
 from flask import Flask, jsonify
-from DHT11Handler import *
+#from DHT11Handler import *
 import threading
 from datetime import datetime
 
-data_thread = threading.Thread(target = DHT11DataStream)
-data_thread.start()
 app = Flask(__name__)
 
 #TODO 
@@ -19,7 +17,7 @@ sensorData = {
 
     }
 
-
+'''
 @app.route('/Temp', methods=['GET'])
 def getTemp(): 
     sensorData['data'] = getTemperature()
@@ -27,15 +25,20 @@ def getTemp():
     sensorData['timestamp'] = str(datetime.now())
     return jsonify(sensorData)
     #return "Temp => " + str(getTemperature())
+'''
 
+@app.route('/test', methods=['GET'])
+def getTemp(): 
+    return jsonify(sensorData)
+    #return "Temp => " + str(getTemperature())
 
-@app.route('/Humdidity')
+@app.route('/Humidity')
 def getHumi(): return "Humidity => " + str(getHumidity())
 
 
 @app.route('/All')
 def getData(): return "Humidity & Temperature => " + str(getAll())
 
-if __name__ == '__main__':
-    app.run(debug = True, port=5005, host= "0.0.0.0")
+
+def runRest(): app.run(port = 5005)    
     
