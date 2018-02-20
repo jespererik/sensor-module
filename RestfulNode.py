@@ -1,10 +1,10 @@
 from flask import Flask, jsonify
-#from DHT11Handler import *
+from DHT11Handler import *
 import threading
 from datetime import datetime
 
-#data_thread = threading.Thread(target = DHT11DataStream)
-#data_thread.start()
+data_thread = threading.Thread(target = DHT11DataStream)
+data_thread.start()
 app = Flask(__name__)
 
 #TODO 
