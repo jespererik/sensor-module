@@ -14,8 +14,8 @@ sensorData = [
     {
         'nodeID'    :1,
         'sensorID'  :1,
-        'dataType'  :
-        'timestamp' : 
+        'dataType'  :,
+        'timestamp' :,
         'data'      :
 
     }
