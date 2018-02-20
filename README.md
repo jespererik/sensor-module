@@ -4,4 +4,4 @@ To create the image run:
 
 docker build -t sensor-module .
 
-docker run --privileged --net=host -ti sensor-module:latest
+docker run --privileged --net=host -ti sensor-module:latest python RestfulNode.py
