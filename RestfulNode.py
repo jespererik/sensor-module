@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, make_response
 import threading
 from datetime import datetime
 
@@ -28,9 +28,13 @@ def getHumi():
     sensorData['timestamp'] = str(datetime.now())
     return jsonify(sensorData)
 
-@app.route('/test', methods=['GET'])
+@app.route('/Test', methods=['GET'])
 def getTemp(): 
     return jsonify(sensorData)
+
+@app.errorhandler(404)
+def not_found(error):
+    return make_response(jsonify({'error': 'Not found'}), 404)
 
 def runRest(): app.run(port = 5005)    
     
