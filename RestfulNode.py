@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, make_response
 import threading
+from DHT11Handler import *
 from datetime import datetime
 
 app = Flask(__name__)
@@ -29,7 +30,7 @@ def getHumi():
     return jsonify(sensorData)
 
 @app.route('/Test', methods=['GET'])
-def getTemp(): 
+def getTest(): 
     return jsonify(sensorData)
 
 @app.errorhandler(404)
