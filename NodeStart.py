@@ -3,7 +3,7 @@ import json
 import threading
 import requests
 import sys
-import netifaces as ni
+import netifaces
 from DHT11Handler import *
 
 nodeInfo = {
@@ -21,8 +21,8 @@ def startThreads():
 def __init():
     url = 'http://127.0.0.1:5000/init'
     #get IP-address
-    ni.ifaddresses('eth0')
-    ip = ni.ifaddresses('eth0')[ni.AF_INET][0]['addr']
+    netifaces.ifaddresses('eth0')
+    ip = netifaces.ifaddresses('eth0')[netifaces.AF_INET][0]['addr']
     nodeInfo['NODE_IP'] = ip
     while True:
         try:
