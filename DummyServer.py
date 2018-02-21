@@ -7,7 +7,6 @@ app = Flask(__name__)
 def nodeInit():
     content = request.json
     print content['NODE_IP']
-    print content['NODE_PORT']
     if content['NODE_ID'] == '': content['NODE_ID'] = 'nodeX'
     print content['NODE_ID']
     

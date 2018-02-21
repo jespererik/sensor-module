@@ -20,20 +20,23 @@ def startThreads():
 
 def __init():
     url = 'http://127.0.0.1:5000/init'
-    try:
-        #get IP-address
-        ni.ifaddresses('eth0')
-        ip = ni.ifaddresses('eth0')[ni.AF_INET][0]['addr']
-        nodeInfo['NODE_IP'] = ip
-        response = requests.post(url, json=nodeInfo)
-        response.raise_for_status()
-        print 'Server Init Complete'
-        respData = json.loads(response.content)
-        print('Aquired NODE_ID: {}').format(respData['NODE_ID'])
-    except requests.exceptions.ConnectionError as err:
-        print err
-        print 'what do'
-        #sys.exit(1)
-    startThreads()   
+    #get IP-address
+    ni.ifaddresses('eth0')
+    ip = ni.ifaddresses('eth0')[ni.AF_INET][0]['addr']
+    nodeInfo['NODE_IP'] = ip
+    while True:
+        try:
+            response = requests.post(url, json=nodeInfo)
+            response.raise_for_status()
+            print 'Server Init Complete'
+            respData = json.loads(response.content)
+            print('Aquired NODE_ID: {}').format(respData['NODE_ID'])
+        except requests.exceptions.ConnectionError as err:
+            print err
+            print 'Retry'
+            continue
+            #sys.exit(1)
+        break
+        startThreads()   
     
 __init()
