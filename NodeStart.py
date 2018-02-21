@@ -3,12 +3,12 @@ import json
 import threading
 import requests
 import sys
+import netifaces as ni
 from DHT11Handler import *
 
 nodeInfo = {
    'NODE_ID': '',
-   'NODE_IP': '192.168.0.1',
-   'NODE_PORT': '5005', 
+   'NODE_IP': '0.0.0.0',
 }
 
 def startThreads():
@@ -21,6 +21,10 @@ def startThreads():
 def __init():
     url = 'http://127.0.0.1:5000/init'
     try:
+        #get IP-address
+        ni.ifaddresses('eth0')
+        ip = ni.ifaddresses('eth0')[ni.AF_INET][0]['addr']
+        nodeInfo['NODE_IP'] = ip
         response = requests.post(url, json=nodeInfo)
         response.raise_for_status()
         print 'Server Init Complete'
