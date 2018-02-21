@@ -1,7 +1,7 @@
 FROM python:2 
 
 ADD DHT11Handler.py /
-#ADD DHT11Handler.pyc /
+ADD NodeStart.py /
 ADD RestfulNode.py /
 
 RUN apt-get install git-core
