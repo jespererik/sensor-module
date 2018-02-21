@@ -6,11 +6,11 @@ from datetime import datetime
 app = Flask(__name__)
 
 sensorData = {
-        'nodeID'    :1,
-        'sensorID'  :1,
-        'dataType'  :1,
-        'timestamp' :1,
-        'data'      :1
+        'nodeID'    :"",
+        'sensorID'  :"",
+        'dataType'  :"",
+        'timestamp' :"",
+        'data'      :""
 
     }
 
