@@ -34,9 +34,10 @@ def __init():
         except requests.exceptions.ConnectionError as err:
             print err
             print 'Retry'
+            sleep(10)
             continue
             #sys.exit(1)
         break
-        startThreads()   
+    startThreads()   
     
 __init()
