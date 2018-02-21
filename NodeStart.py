@@ -12,13 +12,11 @@ nodeInfo = {
 }
 
 def startThreads():
-    if DEBUG: print 'ENTER => startThreads()'
     restThread = threading.Thread(target = runRest)
     DHT11Thread = threading.Thread(target = DHT11DataStream)
     
     restThread.start()
     DHT11Thread.start()
-    if DEBUG: print 'EXIT => startThreads()'
 
 def __init():
     url = 'http://127.0.0.1:5000/init'
