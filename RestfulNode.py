@@ -24,7 +24,7 @@ def getTemp():
 
 @app.route('/Humidity', methods=['GET'])
 def getHumi(): 
-    sensorData['data'] = getTemperature()
+    sensorData['data'] = getHumidity()
     sensorData['dataType'] = "Humidity"
     sensorData['timestamp'] = str(datetime.now())
     return jsonify(sensorData)
