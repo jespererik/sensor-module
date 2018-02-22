@@ -3,6 +3,14 @@ from ast    import literal_eval
 
 app = Flask(__name__)
 
+sensorData = {
+        'nodeID'    :'',
+        'dataType'  :'',
+        'timestamp' :'',
+        'data'      :''
+
+    }
+
 @app.route('/init', methods=['GET', 'POST'])
 def nodeInit():
     content = request.json
@@ -13,8 +21,6 @@ def nodeInit():
 @app.route('/Temp', methods=['POST'])
 def nodeTemp():
     content = request.json
-    if not content in content:
-        abort(400)
     sensorData = {
         'nodeID'    :content['nodeID'],
         'dataType'  :content['dataType'],
