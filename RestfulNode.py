@@ -4,7 +4,7 @@ from DHT11Handler import *
 from datetime import datetime
 import requests
 
-app = Flask(__name__)
+#app = Flask(__name__)
 
 sensorData = {
         'nodeID'    :'',
@@ -21,6 +21,12 @@ def tryFileOpen(filepath):
         print "Error: file does not appear to exist."
         sys.exit(1)
 
+def errorLog(url, err):
+    tryFileOpen("/storage/log/errorLog.log")
+    logfile = open("/storage/log/errorLog.log", "a")
+    logfile.write("Failed to connect to {0}: {1}\n".format(str(url), str(err)))
+    logfile.close()
+
 def postTemp():
     tryFileOpen("/storage/nodeID.txt")
     fopen = open("/storage/nodeID.txt", "r")   
@@ -29,11 +35,19 @@ def postTemp():
     fopen.close()
     url = 'http://127.0.0.1:5000/Temp'
     while True:
-        sensorData['data'] = getTemperature()
-        sensorData['timestamp'] = str(datetime.now())
-        requests.post(url, json=sensorData)
-        sleep(10)
-
+        try:
+            sensorData['data'] = getTemperature()
+            sensorData['timestamp'] = str(datetime.now())
+            requests.post(url, json=sensorData))
+            response.raise_for_status()
+        except requests.exceptions.ConnectionError as err
+            errorLog(url, err)
+            print 'Retry'
+            sleep(10)
+            continue
+        break
+        sleep(5)
+'''
 @app.route('/Temp', methods=['GET'])
 def getTemp(): 
     sensorData['data'] = getTemperature()
@@ -56,7 +70,7 @@ def getTest():
 @app.errorhandler(404)
 def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
-
+'''
 def runRest(): 
     #app.run(port = 5005)    
     postTemp()

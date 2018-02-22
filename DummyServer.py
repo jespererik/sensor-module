@@ -1,5 +1,6 @@
 from flask  import Flask, request, jsonify
 from ast    import literal_eval
+import json
 
 app = Flask(__name__)
 
@@ -27,7 +28,8 @@ def nodeTemp():
         'timestamp' :content['timestamp'],
         'data'      :content['data']
     }
-    return jsonify(sensorData), 201
+    print json.dumps(sensorData)
+    #return jsonify(sensorData), 201
 
 
 if __name__ == '__main__':
