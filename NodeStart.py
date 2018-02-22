@@ -42,7 +42,7 @@ def __init():
     while True:
         try:
             readNodeID()
-            response = requests.post(url, json=nodeInfo['NODE_ID'])
+            response = requests.post(url, json=nodeInfo)
             response.raise_for_status()
             print 'Server Init Complete'
             respData = json.loads(response.content)
