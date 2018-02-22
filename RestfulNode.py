@@ -1,7 +1,8 @@
-from flask import Flask, jsonify, make_response
+from flask import Flask, jsonify, make_response, request
 import threading
 from DHT11Handler import *
 from datetime import datetime
+import requests
 
 app = Flask(__name__)
 
@@ -26,7 +27,7 @@ def postTemp():
     sensorData['nodeID'] = fopen.readline()
     sensorData['dataType'] = "Temperature"
     fopen.close()
-    url = 'http://127.0.0.1:5000/init'
+    url = 'http://127.0.0.1:5000/Temp'
     while True:
         sensorData['data'] = getTemperature()
         sensorData['timestamp'] = str(datetime.now())
