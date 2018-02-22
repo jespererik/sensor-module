@@ -18,6 +18,16 @@ def startThreads():
     restThread.start()
     DHT11Thread.start()
 
+def errorLog(url, msg):
+     try:
+        open(errorLog.log, "r")
+    except IOError:
+      print "Error: File does not appear to exist."
+      sys.exit(1)
+    logfile = open(errorLog, "w")
+    logfile.write("Failed to connect to {0}: {1}\n".format(str(url), str(err)))
+    logfile.close()
+
 def __init():
     url = 'http://127.0.0.1:5000/init'
     #get IP-address
@@ -32,8 +42,7 @@ def __init():
             respData = json.loads(response.content)
             print('Aquired NODE_ID: {}').format(respData['NODE_ID'])
         except requests.exceptions.ConnectionError as err:
-            logfile = open("errorLog.log", "w")
-            logfile.write("Failed to connect to {0}: {1}\n".format(str(url), str(err)))
+            errorLog(url, err)
             print err
             print 'Retry'
             sleep(10)
