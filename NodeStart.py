@@ -1,10 +1,9 @@
-from RestfulNode  import *
 import json
 import threading
 import requests
 import sys
-import netifaces
 from DHT11Handler import *
+from RestfulNode  import *
 
 nodeInfo = {
    'NODE_ID': '',
@@ -18,12 +17,12 @@ def startThreads():
     DHT11Thread.start()
 
 def errorLog(url, err):
-     try:
-        open("errorLog.log", "r")
+    try:
+        open("/storage/log/errorLog.log", "r")
     except IOError:
         print "Error: File does not appear to exist."
         sys.exit(1)
-    logfile = open("errorLog.log", "w")
+    logfile = open("/storage/log/errorLog.log", "a")
     logfile.write("Failed to connect to {0}: {1}\n".format(str(url), str(err)))
     logfile.close()
 
