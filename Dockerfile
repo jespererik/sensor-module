@@ -3,7 +3,7 @@ FROM python:2
 ADD DHT11Handler.py /
 ADD NodeStart.py /
 ADD RestfulNode.py /
-ADD errorLog.log /
+COPY log /
 
 RUN apt-get install git-core
 RUN git clone https://github.com/adafruit/Adafruit_Python_DHT.git
