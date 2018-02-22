@@ -7,7 +7,6 @@ app = Flask(__name__)
 
 sensorData = {
         'nodeID'    :'',
-        'sensorID'  :'',
         'dataType'  :'',
         'timestamp' :'',
         'data'      :''

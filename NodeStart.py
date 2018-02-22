@@ -8,7 +8,6 @@ from DHT11Handler import *
 
 nodeInfo = {
    'NODE_ID': '',
-   'NODE_IP': '0.0.0.0',
 }
 
 def startThreads():
@@ -18,25 +17,21 @@ def startThreads():
     restThread.start()
     DHT11Thread.start()
 
-def errorLog(url, msg):
+def errorLog(url, err):
      try:
-        open(errorLog.log, "r")
+        open("errorLog.log", "r")
     except IOError:
-      print "Error: File does not appear to exist."
-      sys.exit(1)
-    logfile = open(errorLog, "w")
+        print "Error: File does not appear to exist."
+        sys.exit(1)
+    logfile = open("errorLog.log", "w")
     logfile.write("Failed to connect to {0}: {1}\n".format(str(url), str(err)))
     logfile.close()
 
 def __init():
     url = 'http://127.0.0.1:5000/init'
-    #get IP-address
-    netifaces.ifaddresses('eth0')
-    ip = netifaces.ifaddresses('eth0')[netifaces.AF_INET][0]['addr']
-    nodeInfo['NODE_IP'] = ip
     while True:
         try:
-            response = requests.post(url, json=nodeInfo)
+            response = requests.post(url, json=nodeInfo['NODE_ID'])
             response.raise_for_status()
             print 'Server Init Complete'
             respData = json.loads(response.content)
@@ -49,7 +44,6 @@ def __init():
             continue
             #sys.exit(1)
         break
-    logfile.close()
     startThreads()   
     
 __init()
