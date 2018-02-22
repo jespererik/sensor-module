@@ -38,9 +38,8 @@ def postTemp():
         try:
             sensorData['data'] = getTemperature()
             sensorData['timestamp'] = str(datetime.now())
-            requests.post(url, json=sensorData))
-            response.raise_for_status()
-        except requests.exceptions.ConnectionError as err
+            requests.post(url, json=sensorData)
+        except requests.exceptions.ConnectionError as err:
             errorLog(url, err)
             print 'Retry'
             sleep(10)

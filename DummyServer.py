@@ -29,7 +29,7 @@ def nodeTemp():
         'data'      :content['data']
     }
     print json.dumps(sensorData)
-    #return jsonify(sensorData), 201
+    return jsonify(sensorData), 201
 
 
 if __name__ == '__main__':
