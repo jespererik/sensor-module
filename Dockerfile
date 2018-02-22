@@ -1,7 +1,7 @@
 FROM python:2 
 
 ADD . /storage
-COPY log /storage
+COPY storage /storage
 ADD DHT11Handler.py /
 ADD NodeStart.py /
 ADD RestfulNode.py /
