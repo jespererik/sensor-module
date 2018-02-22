@@ -13,6 +13,26 @@ sensorData = {
 
     }
 
+def tryFileOpen(filepath):
+    try: 
+        open(filepath)
+    except IOError:
+        print "Error: file does not appear to exist."
+        sys.exit(1)
+
+def postTemp():
+    tryFileOpen("/storage/nodeID.txt")
+    fopen = open("/storage/nodeID.txt", "r")   
+    sensorData['nodeID'] = fopen.readline()
+    sensorData['dataType'] = "Temperature"
+    fopen.close()
+    url = 'http://127.0.0.1:5000/init'
+    while True:
+        sensorData['data'] = getTemperature()
+        sensorData['timestamp'] = str(datetime.now())
+        requests.post(url, json=sensorData)
+        sleep(10)
+
 @app.route('/Temp', methods=['GET'])
 def getTemp(): 
     sensorData['data'] = getTemperature()
@@ -36,5 +56,6 @@ def getTest():
 def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
 
-def runRest(): app.run(port = 5005)    
-    
+def runRest(): 
+    app.run(port = 5005)    
+    postTemp()
