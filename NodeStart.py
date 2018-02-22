@@ -32,6 +32,8 @@ def __init():
             respData = json.loads(response.content)
             print('Aquired NODE_ID: {}').format(respData['NODE_ID'])
         except requests.exceptions.ConnectionError as err:
+            logfile = open("errorLog.log", "w")
+            logfile.write("Failed to connect to {0}: {1}\n".format(str(url), str(err)))
             print err
             print 'Retry'
             sleep(10)
