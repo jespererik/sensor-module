@@ -11,7 +11,7 @@ def nodeInit():
     return jsonify(content)
 
 @app.route('/Temp', methods=['POST'])
-def nodeTemp:
+def nodeTemp():
     content = request.json
     if not content in content:
         abort(400)

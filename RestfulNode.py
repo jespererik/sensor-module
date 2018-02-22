@@ -58,5 +58,5 @@ def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
 
 def runRest(): 
-    app.run(port = 5005)    
+    #app.run(port = 5005)    
     postTemp()
