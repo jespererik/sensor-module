@@ -5,7 +5,6 @@ import requests
 import sys
 import netifaces
 from DHT11Handler import *
-import logging
 
 nodeInfo = {
    'NODE_ID': '',
@@ -33,16 +32,12 @@ def __init():
             respData = json.loads(response.content)
             print('Aquired NODE_ID: {}').format(respData['NODE_ID'])
         except requests.exceptions.ConnectionError as err:
-            printLog(err)
+            print err
+            print 'Retry'
             sleep(10)
             continue
             #sys.exit(1)
         break
-    startThreads()
-
-def printLog(str logInfo).
-    logging.basicConfig(level=logging.DEBUG, filename="logfile", filemode="a+",
-                        format="%(asctime)-15s %(levelname)-8s %(message)s")
-    logging.info(logInfo)
+    startThreads()   
     
 __init()
