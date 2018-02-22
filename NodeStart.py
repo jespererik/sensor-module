@@ -9,7 +9,7 @@ nodeInfo = {
    'NODE_ID': '',
 }
 
-def tryFileOpen(filepath)
+def tryFileOpen(filepath):
     try: 
         open(filepath)
     except IOError:
