@@ -40,6 +40,7 @@ def __init():
             continue
             #sys.exit(1)
         break
+        logfile.close()
     startThreads()   
     
 __init()
