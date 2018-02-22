@@ -9,16 +9,26 @@ nodeInfo = {
    'NODE_ID': '',
 }
 
-def readNodeID():
+def tryFileOpen(filepath)
     try: 
-        open("/storage/nodeID.txt")
+        open(filepath)
     except IOError:
         print "Error: file does not appear to exist."
         sys.exit(1)
+
+def readNodeID():
+    tryFileOpen("/storage/nodeID.txt")
     fopen = open("/storage/nodeID.txt", "r")
     nodeInfo['NODE_ID'] = fopen.readline()
     print nodeInfo['NODE_ID']
     fopen.close()
+
+def writeNodeID(nodeID):
+    tryFileOpen("/storage/nodeID.txt")
+    fopen = open("/storage/nodeID.txt", "w")
+    fopen.write(nodeID)
+    fopen.close()
+
 
 def startThreads():
     restThread = threading.Thread(target = runRest)
@@ -28,11 +38,7 @@ def startThreads():
     DHT11Thread.start()
 
 def errorLog(url, err):
-    try:
-        open("/storage/log/errorLog.log", "r")
-    except IOError:
-        print "Error: File does not appear to exist."
-        sys.exit(1)
+    tryFileOpen("/storage/log/errorLog.log")
     logfile = open("/storage/log/errorLog.log", "a")
     logfile.write("Failed to connect to {0}: {1}\n".format(str(url), str(err)))
     logfile.close()
@@ -45,8 +51,12 @@ def __init():
             response = requests.post(url, json=nodeInfo)
             response.raise_for_status()
             print 'Server Init Complete'
-            respData = json.loads(response.content)
-            print('Aquired NODE_ID: {}').format(respData['NODE_ID'])
+            responseData = json.loads(response.content)
+            if (responseData['NODE_ID'] !=  nodeInfo['NODE_ID']):
+                writeNodeID(responseData['NODE_ID'])
+                print('Aquired NODE_ID: {}').format(responseData['NODE_ID'])
+            else:
+                pass
         except requests.exceptions.ConnectionError as err:
             errorLog(url, err)
             print 'Retry'
