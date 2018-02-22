@@ -6,7 +6,7 @@ from DHT11Handler import *
 from RestfulNode  import *
 
 nodeInfo = {
-   'NODE_ID': '',
+   'nodeID': '',
 }
 
 def tryFileOpen(filepath):
@@ -19,8 +19,8 @@ def tryFileOpen(filepath):
 def readNodeID():
     tryFileOpen("/storage/nodeID.txt")
     fopen = open("/storage/nodeID.txt", "r")
-    nodeInfo['NODE_ID'] = fopen.readline()
-    print nodeInfo['NODE_ID']
+    nodeInfo['nodeID'] = fopen.readline()
+    print nodeInfo['nodeID']
     fopen.close()
 
 def writeNodeID(nodeID):
@@ -52,9 +52,9 @@ def __init():
             response.raise_for_status()
             print 'Server Init Complete'
             responseData = json.loads(response.content)
-            if (responseData['NODE_ID'] !=  nodeInfo['NODE_ID']):
-                writeNodeID(responseData['NODE_ID'])
-                print('Aquired NODE_ID: {}').format(responseData['NODE_ID'])
+            if (responseData['nodeID'] !=  nodeInfo['nodeID']):
+                writeNodeID(responseData['nodeID'])
+                print('Aquired nodeID: {}').format(responseData['nodeID'])
             else:
                 pass
         except requests.exceptions.ConnectionError as err:
