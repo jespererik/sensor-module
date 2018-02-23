@@ -38,8 +38,8 @@ def startThreads():
     DHT11Thread.start()
 
 def errorLog(url, err):
-    tryFileOpen("/sensor-module/shared/log/errorLog.log")
-    logfile = open("/sensor-module/shared/log/errorLog.log", "a")
+    tryFileOpen("/sensor-module/shared/log/errorlog.log")
+    logfile = open("/sensor-module/shared/log/errorlog.log", "a")
     logfile.write("Failed to connect to {0}: {1}\n".format(str(url), str(err)))
     logfile.close()
 

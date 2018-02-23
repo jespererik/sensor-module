@@ -41,7 +41,6 @@ def postTemp():
             print 'Retry'
             sleep(10)
             continue
-        break
         sleep(5)
 
 def runRest():    
