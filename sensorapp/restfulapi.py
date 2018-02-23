@@ -19,14 +19,14 @@ def tryFileOpen(filepath):
         sys.exit(1)
 
 def errorLog(url, err):
-    tryFileOpen("/shared/log/errorlog.log")
-    logfile = open("/shared/log/errorlog.log", "a")
+    tryFileOpen("/sensor-module/shared/log/errorlog.log")
+    logfile = open("/sensor-module/shared/log/errorlog.log", "a")
     logfile.write("Failed to connect to {0}: {1}\n".format(str(url), str(err)))
     logfile.close()
 
 def postTemp():
-    tryFileOpen("/shared/sensor.conf")
-    fopen = open("/shared/sensor.conf", "r")   
+    tryFileOpen("/sensor-module/shared/sensor.conf")
+    fopen = open("/sensor-module/shared/sensor.conf", "r")   
     sensorData['nodeID'] = fopen.readline()
     sensorData['dataType'] = "Temperature"
     fopen.close()
