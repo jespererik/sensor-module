@@ -2,12 +2,9 @@ FROM python:2
 
 WORKDIR /sensor-module
 
-ADD shared /shared
-COPY shared /shared
-ADD sensorapp /sensorapp
-ADD sensorapp ./sensorapp/start.py
-ADD sensorapp ./sensorapp/restfulapi.py
-ADD sensorapp ./sensorapp/sensorhandler.py
+ADD /shared ./shared
+COPY /shared ./shared
+ADD /sensorapp ./sensorapp
 
 RUN apt-get install git-core
 RUN git clone https://github.com/adafruit/Adafruit_Python_DHT.git
