@@ -2,8 +2,8 @@ import json
 import threading
 import requests
 import sys
-from DHT11Handler import *
-from RestfulNode  import *
+from sensorhandler import *
+from restfulapi  import *
 
 nodeInfo = {
    'nodeID': '',
@@ -17,15 +17,15 @@ def tryFileOpen(filepath):
         sys.exit(1)
 
 def readNodeID():
-    tryFileOpen("/shared/nodeID.txt")
-    fopen = open("/shared/nodeID.txt", "r")
+    tryFileOpen("/shared/sensor.conf")
+    fopen = open("/shared/sensor.conf", "r")
     nodeInfo['nodeID'] = fopen.readline()
     print nodeInfo['nodeID']
     fopen.close()
 
 def writeNodeID(nodeID):
-    tryFileOpen("/shared/nodeID.txt")
-    fopen = open("/shared/nodeID.txt", "w")
+    tryFileOpen("/shared/sensor.conf")
+    fopen = open("/shared/sensor.conf", "w")
     fopen.write(nodeID)
     fopen.close()
 
