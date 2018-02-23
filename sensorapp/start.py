@@ -17,15 +17,15 @@ def tryFileOpen(filepath):
         sys.exit(1)
 
 def readNodeID():
-    tryFileOpen("/storage/nodeID.txt")
-    fopen = open("/storage/nodeID.txt", "r")
+    tryFileOpen("/shared/nodeID.txt")
+    fopen = open("/shared/nodeID.txt", "r")
     nodeInfo['nodeID'] = fopen.readline()
     print nodeInfo['nodeID']
     fopen.close()
 
 def writeNodeID(nodeID):
-    tryFileOpen("/storage/nodeID.txt")
-    fopen = open("/storage/nodeID.txt", "w")
+    tryFileOpen("/shared/nodeID.txt")
+    fopen = open("/shared/nodeID.txt", "w")
     fopen.write(nodeID)
     fopen.close()
 
@@ -38,8 +38,8 @@ def startThreads():
     DHT11Thread.start()
 
 def errorLog(url, err):
-    tryFileOpen("/storage/log/errorLog.log")
-    logfile = open("/storage/log/errorLog.log", "a")
+    tryFileOpen("/shared/log/errorLog.log")
+    logfile = open("/shared/log/errorLog.log", "a")
     logfile.write("Failed to connect to {0}: {1}\n".format(str(url), str(err)))
     logfile.close()
 
