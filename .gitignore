@@ -39,3 +39,6 @@ coverage.xml
 
 #log
 .log
+
+#shared
+shared/*
