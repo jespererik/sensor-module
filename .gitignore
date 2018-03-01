@@ -36,3 +36,6 @@ coverage.xml
 
 # Translations
 *.mo
+
+#log
+.log
