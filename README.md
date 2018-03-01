@@ -4,9 +4,11 @@ To create the image run:
 
 docker build -t sensor-module .
 
-docker run --privileged --net=host -ti sensor-module:latest python RestfulNode.py
-
 docker run -v ~/sensor-module/shared/:/sensor-module/shared/ --privileged --net=host -ti sensor-module:latest bash
+
+From bash run:
+
+python sensorapp/
 
 Stop all containers:
 
