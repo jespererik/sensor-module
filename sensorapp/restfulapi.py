@@ -4,10 +4,11 @@ from datetime import datetime
 import requests
 
 sensorData = {
-        'nodeID'    :'',
-        'dataType'  :'',
-        'timestamp' :'',
-        'data'      :''
+        'NODE_NAME' :'',
+        'SENSOR_NAME:'',
+        'TYPE'      :'',
+        'TIMESTAMP' :'',
+        'DATA'      :''
 
     }
 
@@ -27,14 +28,15 @@ def errorLog(url, err):
 def postTemp():
     tryFileOpen("/sensor-module/shared/sensor.conf")
     fopen = open("/sensor-module/shared/sensor.conf", "r")   
-    sensorData['nodeID'] = fopen.readline()
-    sensorData['dataType'] = "Temperature"
+    sensorData['NODE_NAME'] = fopen.readline()
+    sensorData['DATATYPE'] = "Temperature"
+    sensorData['SENSOR_NAME'] = "DHT11"
     fopen.close()
     url = 'http://192.168.0.121:5000/Temp'
     while True:
         try:
-            sensorData['data'] = getTemperature()
-            sensorData['timestamp'] = str(datetime.now())
+            sensorData['DATA'] = getTemperature()
+            sensorData['TIMESTAMP'] = str(datetime.now())
             requests.post(url, json=sensorData)
         except requests.exceptions.ConnectionError as err:
             errorLog(url, err)
