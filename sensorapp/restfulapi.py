@@ -4,11 +4,11 @@ from datetime import datetime
 import requests
 
 sensorData = {
-        'NODE_NAME' :'',
-        'SENSOR_NAME:'',
-        'TYPE'      :'',
-        'TIMESTAMP' :'',
-        'DATA'      :''
+        'NODE_NAME'     :'',
+        'SENSOR_NAME'   :'',
+        'TYPE'          :'',
+        'TIMESTAMP'     :'',
+        'DATA'          :''
 
     }
 
