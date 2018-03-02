@@ -23,7 +23,6 @@ def postTemp(node_name):
     sensorData['NODE_NAME'] = node_name
     sensorData['DATATYPE'] = "Temperature"
     sensorData['SENSOR_NAME'] = "DHT11"
-    fopen.close()
     url = 'http://192.168.0.121:5000/Temp'
     while True:
         try:
