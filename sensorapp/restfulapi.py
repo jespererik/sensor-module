@@ -30,7 +30,7 @@ def postTemp():
     sensorData['nodeID'] = fopen.readline()
     sensorData['dataType'] = "Temperature"
     fopen.close()
-    url = 'http://127.0.0.1:5000/Temp'
+    url = 'http://192.168.0.121:5000/Temp'
     while True:
         try:
             sensorData['data'] = getTemperature()

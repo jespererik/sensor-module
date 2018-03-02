@@ -44,7 +44,7 @@ def errorLog(url, err):
     logfile.close()
 
 def __init():
-    url = 'http://127.0.0.1:5000/init'
+    url = 'http://192.168.0.121:5000/init'
     while True:
         try:
             readNodeID()
