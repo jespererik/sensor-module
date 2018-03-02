@@ -19,9 +19,8 @@ def errorLog(url, err):
 
 
 def postTemp(node_name):
-          
     sensorData['NODE_NAME'] = node_name
-    sensorData['DATATYPE'] = "Temperature"
+    sensorData['TYPE'] = "Temperature"
     sensorData['SENSOR_NAME'] = "DHT11"
     url = 'http://192.168.0.121:5000/Temp'
     while True:
