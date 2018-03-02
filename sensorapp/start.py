@@ -39,7 +39,7 @@ def Write_Node_Config(new_key, new_value):
                 conf_file.write(key + ':' + value + '\n')
     conf_file.close()
 
-def startThreads():
+def Start_Threads():
     restThread = threading.Thread(target = runRest)
     DHT11Thread = threading.Thread(target = DHT11DataStream)
     
