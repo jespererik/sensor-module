@@ -12,22 +12,18 @@ sensorData = {
 
     }
 
-def tryFileOpen(filepath):
-    try: 
-        open(filepath)
-    except IOError:
-        print "Error: file does not appear to exist."
-        sys.exit(1)
-
 def errorLog(url, err):
-    tryFileOpen("/sensor-module/shared/error.log")
     logfile = open("/sensor-module/shared/error.log", "a")
     logfile.write("Failed to connect to {0}: {1}\n".format(str(url), str(err)))
     logfile.close()
 
 def postTemp():
-    tryFileOpen("/sensor-module/shared/sensor.conf")
-    fopen = open("/sensor-module/shared/sensor.conf", "r")   
+    try:
+        fopen = open("/sensor-module/shared/sensor.conf", "r")
+    except IOError as err:
+        print(err)
+        sys.exit(1)
+           
     sensorData['NODE_NAME'] = fopen.readline()
     sensorData['DATATYPE'] = "Temperature"
     sensorData['SENSOR_NAME'] = "DHT11"
