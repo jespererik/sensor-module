@@ -17,14 +17,10 @@ def errorLog(url, err):
     logfile.write("Failed to connect to {0}: {1}\n".format(str(url), str(err)))
     logfile.close()
 
-def postTemp():
-    try:
-        fopen = open("/sensor-module/shared/sensor.conf", "r")
-    except IOError as err:
-        print(err)
-        sys.exit(1)
-           
-    sensorData['NODE_NAME'] = fopen.readline()
+
+def postTemp(node_name):
+          
+    sensorData['NODE_NAME'] = node_name
     sensorData['DATATYPE'] = "Temperature"
     sensorData['SENSOR_NAME'] = "DHT11"
     fopen.close()
@@ -41,5 +37,5 @@ def postTemp():
             continue
         sleep(5)
 
-def runRest():    
-    postTemp()
+def runRest(node_name):    
+    postTemp(node_name)
