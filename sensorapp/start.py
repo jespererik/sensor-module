@@ -14,6 +14,7 @@ NODE_CONFIG = {
    'LOCATION': ''
 }
 
+
 def Try_File_Open(filepath):
     try: 
         open(filepath)
@@ -39,9 +40,8 @@ def Write_Node_Config(new_key, new_value):
                 conf_file.write(key + ':' + value + '\n')
     conf_file.close()
 
-def Start_Threads():
-    print(NODE_CONFIG["NODE_NAME"])
-    restThread = threading.Thread(target = runRest, args = (NODE_CONFIG["NODE_NAME"],))
+def Start_Threads(node_name):
+    restThread = threading.Thread(target = runRest, args = (node_name,))
     DHT11Thread = threading.Thread(target = DHT11DataStream)
     
     restThread.start()
@@ -56,7 +56,6 @@ def __init():
             response = requests.post(url, json = NODE_CONFIG)
             response.raise_for_status()
             response_data = json.loads(response.content)
-            global NODE_CONFIG = response_data
             print(response_data)
             if (response_data['NODE_NAME'] !=  NODE_CONFIG['NODE_NAME']):
                 Write_NODE_CONFIG('NODE_NAME', response_data['NODE_NAME'])
@@ -66,6 +65,6 @@ def __init():
         except requests.exceptions.ConnectionError as err:
             time.sleep(10)
             continue
-    Start_Threads()   
+    Start_Threads(response_data["NODE_NAME"])   
     
 __init()
