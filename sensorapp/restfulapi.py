@@ -27,7 +27,8 @@ def postTemp(node_name):
         try:
             sensorData['DATA'] = getTemperature()
             sensorData['TIMESTAMP'] = str(datetime.now())
-            requests.post(url, json=sensorData)
+            response = requests.post(url, json=sensorData)
+            print(json.loads(response.content))
         except requests.exceptions.ConnectionError as err:
             errorLog(url, err)
             print 'Retry'
