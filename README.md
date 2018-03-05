@@ -8,7 +8,7 @@ docker run -v ~/sensor-module/shared/:/sensor-module/shared/ --privileged --net=
 
 From bash run:
 
-python sensorapp/
+python sensorapp/start.py
 
 Stop all containers:
 
