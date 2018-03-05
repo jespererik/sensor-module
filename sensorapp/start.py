@@ -56,6 +56,7 @@ def __init():
             response = requests.post(url, json = node_config)
             response.raise_for_status()
             response_data = json.loads(response.content)
+            node_config = response_data
             print(response_data)
             if (response_data['NODE_NAME'] !=  node_config['NODE_NAME']):
                 Write_Node_Config('NODE_NAME', response_data['NODE_NAME'])
