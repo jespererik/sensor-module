@@ -49,7 +49,7 @@ def Start_Threads(node_name):
 
 
 def __init():
-    Read_Node_config()
+    Read_Node_Config()
     url = "http://192.168.0.121:5000/init"
     while True:
         try:
@@ -58,7 +58,7 @@ def __init():
             response_data = json.loads(response.content)
             print(response_data)
             if (response_data['NODE_NAME'] !=  NODE_CONFIG['NODE_NAME']):
-                Write_NODE_CONFIG('NODE_NAME', response_data['NODE_NAME'])
+                Write_Node_Config('NODE_NAME', response_data['NODE_NAME'])
             else:
                 pass
             break
