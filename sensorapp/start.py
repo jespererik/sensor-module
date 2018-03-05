@@ -56,7 +56,7 @@ def __init():
             response = requests.post(url, json = NODE_CONFIG)
             response.raise_for_status()
             response_data = json.loads(response.content)
-            NODE_CONFIG = response_data
+            global NODE_CONFIG = response_data
             print(response_data)
             if (response_data['NODE_NAME'] !=  NODE_CONFIG['NODE_NAME']):
                 Write_NODE_CONFIG('NODE_NAME', response_data['NODE_NAME'])
