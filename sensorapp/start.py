@@ -40,6 +40,7 @@ def Write_Node_Config(new_key, new_value):
     conf_file.close()
 
 def Start_Threads():
+    print(node_config["NODE_NAME"])
     restThread = threading.Thread(target = runRest, args = (node_config["NODE_NAME"],))
     DHT11Thread = threading.Thread(target = DHT11DataStream)
     
