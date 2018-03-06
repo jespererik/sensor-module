@@ -1,70 +1,96 @@
+from sensorhandler import *
+from restfulapi  import *
 import json
 import threading
 import requests
 import sys
-from sensorhandler import *
-from restfulapi  import *
+import logging
 import time
 
 #Add errorhandling to all functions which have a request to the server
 #Where they could get a invalid packet structure response
 
-NODE_CONFIG = {
-   'NODE_NAME': '',
-   'LOCATION': ''
-}
+logging.basicConfig(
+    filename = "/sensor-module/shared/node.log",
+    filemode = 'w',
+    level = logging.DEBUG,
 
+)
+formatter = logging.formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+NODE_LOGGER = logging.getLogger(__name__)
 
-def Try_File_Open(filepath):
+def try_file_open(filepath):
     try: 
         open(filepath)
     except IOError:
-        print("File does not appear to exist {}".format(filepath))
+        NODE_LOGGER.error("File does not appear to exist: {}".format(filepath))
         sys.exit(1)
 
-def Read_Node_Config():
-    Try_File_Open("/sensor-module/shared/sensor.conf")
-    with open("/sensor-module/shared/sensor.conf", "r") as conf_file:
-        for element in conf_file.readlines():
-            key, value = element.strip('\n').split(":")
-            NODE_CONFIG[key] = value
-    conf_file.close()
 
-def Write_Node_Config(new_key, new_value):
-    Try_File_Open("/sensor-module/shared/sensor.conf")
-    with open("/sensor-module/shared/sensor.conf", "w") as conf_file:
+def read_config_file(filepath):
+    try_file_open(filepath)
+    with open(filepath, "r") as conf_file:
+        for element in conf_file:
+            key, value = element.strip('\n').split(":")
+            node_config[key] = value
+    NODE_LOGGER.info("Read from {}: keys: {} values: {}".format(filepath ,NODE_CONFIG.iteritems()))
+    conf_file.close()
+    return node_config
+
+
+def write_config_file(filepath, new_key, new_value):
+    try_file_open(filepath)
+    with open(filepath, "w") as conf_file:
         for key, value in NODE_CONFIG.iteritems():
             if new_key == key:
                 conf_file.write(key + ':' + new_value + '\n')
             else:
                 conf_file.write(key + ':' + value + '\n')
+    NODE_LOGGER.info('Wrote to new values to {}: keys: {} values: {}'.format(filepath, new_key, new_value))
     conf_file.close()
 
-def Start_Threads(node_name):
-    restThread = threading.Thread(target = runRest, args = (node_name,))
+
+def Start_Threads(node_config):
+    restThread = threading.Thread(target = runRest, kwargs = node_config)
     DHT11Thread = threading.Thread(target = DHT11DataStream)
     
     restThread.start()
     DHT11Thread.start()
 
 
+<<<<<<< HEAD
+def node_init():
+    config = read_node_config("sensor-module/shared/node.conf")
+    url = "http://{ip}:{port}/init".format(ip = config["SERVER_IP"], port = config[SERVER_PORT])
+
+=======
 def __init():
     Read_Node_Config()
     url = "http://192.168.0.121:5000/init"
+>>>>>>> 9319dd53cf9ca2a64f6b2e49abfa759c3b3530c8
     while True:
         try:
-            response = requests.post(url, json = NODE_CONFIG)
+            response = requests.post(url, json = config)
             response.raise_for_status()
             response_data = json.loads(response.content)
-            print(response_data)
+            NODE_LOGGER.info('init complete')
+            
             if (response_data['NODE_NAME'] !=  NODE_CONFIG['NODE_NAME']):
+<<<<<<< HEAD
+                write_node_config("../shared/node.conf", 'NODE_NAME', response_data['NODE_NAME'])
+                NODE_LOGGER.info("Fresh init: NODE_NAME: {}".format(response_data["NODE_NAME"]))
+=======
                 Write_Node_Config('NODE_NAME', response_data['NODE_NAME'])
+>>>>>>> 9319dd53cf9ca2a64f6b2e49abfa759c3b3530c8
             else:
                 pass
             break
         except requests.exceptions.ConnectionError as err:
+            NODE_LOGGER.error("Host unreachable, retyring connection in 10s\nerror: {}".format(err))
             time.sleep(10)
             continue
-    Start_Threads(response_data["NODE_NAME"])   
     
-__init()
+    Start_Threads(response_data)   
+
+if __name__ == '__main__':
+    node_init()
