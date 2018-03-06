@@ -58,10 +58,16 @@ def Start_Threads(node_config):
     DHT11Thread.start()
 
 
+<<<<<<< HEAD
 def node_init():
     config = read_node_config("sensor-module/shared/node.conf")
     url = "http://{ip}:{port}/init".format(ip = config["SERVER_IP"], port = config[SERVER_PORT])
 
+=======
+def __init():
+    Read_Node_Config()
+    url = "http://192.168.0.121:5000/init"
+>>>>>>> 9319dd53cf9ca2a64f6b2e49abfa759c3b3530c8
     while True:
         try:
             response = requests.post(url, json = config)
@@ -70,8 +76,12 @@ def node_init():
             NODE_LOGGER.info('init complete')
             
             if (response_data['NODE_NAME'] !=  NODE_CONFIG['NODE_NAME']):
+<<<<<<< HEAD
                 write_node_config("../shared/node.conf", 'NODE_NAME', response_data['NODE_NAME'])
                 NODE_LOGGER.info("Fresh init: NODE_NAME: {}".format(response_data["NODE_NAME"]))
+=======
+                Write_Node_Config('NODE_NAME', response_data['NODE_NAME'])
+>>>>>>> 9319dd53cf9ca2a64f6b2e49abfa759c3b3530c8
             else:
                 pass
             break
