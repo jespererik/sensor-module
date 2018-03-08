@@ -60,7 +60,7 @@ def Start_Threads(node_config):
 
 
 def node_init():
-    config = read_config_file("sensor-module/shared/node.conf")
+    config = read_config_file("/sensor-module/shared/node.conf")
     url = "http://{ip}:{port}/init".format(ip = config["SERVER_IP"], port = config["SERVER_PORT"])
 
     while True:
