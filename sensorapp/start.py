@@ -13,7 +13,7 @@ import time
 logging.basicConfig(
     filename = "/sensor-module/shared/node.log",
     filemode = 'w',
-    level = logging.DEBUG,
+    level = logging.DEBUG
 
 )
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -34,15 +34,15 @@ def read_config_file(filepath):
         for element in conf_file:
             key, value = element.strip('\n').split(":")
             node_config[key] = value
-    NODE_LOGGER.info("Read from {}: keys: {} values: {}".format(filepath ,conf_file.iteritems()))
+    #NODE_LOGGER.info("Read from {}: keys: {} values: {}".format(filepath ,conf_file.iteritems()))
     conf_file.close()
     return node_config
 
 
-def write_config_file(filepath, new_key, new_value):
+def write_config_file(filepath, config, new_key, new_value):
     try_file_open(filepath)
     with open(filepath, "w") as conf_file:
-        for key, value in conf_file.iteritems():
+        for key, value in config.iteritems():
             if new_key == key:
                 conf_file.write(key + ':' + new_value + '\n')
             else:
@@ -71,7 +71,7 @@ def node_init():
             NODE_LOGGER.info('init complete')
             
             if (response_data['NODE_NAME'] !=  config['NODE_NAME']):
-                write_config_file("sensor-module/shared/node.conf", 'NODE_NAME', response_data['NODE_NAME'])
+                write_config_file("/sensor-module/shared/node.conf", config, 'NODE_NAME', response_data['NODE_NAME'])
                 NODE_LOGGER.info("Fresh init: NODE_NAME: {}".format(response_data["NODE_NAME"]))
             else:
                 pass
