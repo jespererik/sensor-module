@@ -16,7 +16,7 @@ logging.basicConfig(
     level = logging.DEBUG,
 
 )
-formatter = logging.formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 NODE_LOGGER = logging.getLogger(__name__)
 
 def try_file_open(filepath):
@@ -29,11 +29,12 @@ def try_file_open(filepath):
 
 def read_config_file(filepath):
     try_file_open(filepath)
+    node_config = {} 
     with open(filepath, "r") as conf_file:
         for element in conf_file:
             key, value = element.strip('\n').split(":")
             node_config[key] = value
-    NODE_LOGGER.info("Read from {}: keys: {} values: {}".format(filepath ,NODE_CONFIG.iteritems()))
+    NODE_LOGGER.info("Read from {}: keys: {} values: {}".format(filepath ,conf_file.iteritems()))
     conf_file.close()
     return node_config
 
@@ -41,7 +42,7 @@ def read_config_file(filepath):
 def write_config_file(filepath, new_key, new_value):
     try_file_open(filepath)
     with open(filepath, "w") as conf_file:
-        for key, value in NODE_CONFIG.iteritems():
+        for key, value in conf_file.iteritems():
             if new_key == key:
                 conf_file.write(key + ':' + new_value + '\n')
             else:
@@ -59,8 +60,8 @@ def Start_Threads(node_config):
 
 
 def node_init():
-    config = read_node_config("sensor-module/shared/node.conf")
-    url = "http://{ip}:{port}/init".format(ip = config["SERVER_IP"], port = config[SERVER_PORT])
+    config = read_config_file("sensor-module/shared/node.conf")
+    url = "http://{ip}:{port}/init".format(ip = config["SERVER_IP"], port = config["SERVER_PORT"])
 
     while True:
         try:
@@ -69,8 +70,8 @@ def node_init():
             response_data = json.loads(response.content)
             NODE_LOGGER.info('init complete')
             
-            if (response_data['NODE_NAME'] !=  NODE_CONFIG['NODE_NAME']):
-                write_node_config("sensor-module/shared/node.conf", 'NODE_NAME', response_data['NODE_NAME'])
+            if (response_data['NODE_NAME'] !=  config['NODE_NAME']):
+                write_config_file("sensor-module/shared/node.conf", 'NODE_NAME', response_data['NODE_NAME'])
                 NODE_LOGGER.info("Fresh init: NODE_NAME: {}".format(response_data["NODE_NAME"]))
             else:
                 pass
