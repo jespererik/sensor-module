@@ -51,8 +51,8 @@ def write_config_file(filepath, config, new_key, new_value):
     conf_file.close()
 
 
-def Start_Threads(node_config):
-    restThread = threading.Thread(target = runRest, kwargs = node_config)
+def Start_Threads():
+    restThread = threading.Thread(target = runRest)
     DHT11Thread = threading.Thread(target = DHT11DataStream)
     
     restThread.start()
@@ -81,7 +81,7 @@ def node_init():
             time.sleep(10)
             continue
     
-    Start_Threads(response_data)   
+    Start_Threads()   
 
 if __name__ == '__main__':
     node_init()
