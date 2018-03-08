@@ -3,6 +3,7 @@ import json
 from sensorhandler import *
 from datetime import datetime
 import requests
+import logging
 
 logging.basicConfig(
     filename = "/sensor-module/shared/node.log",
@@ -10,7 +11,7 @@ logging.basicConfig(
     level = logging.DEBUG,
 
 )
-formatter = logging.formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 REST_LOGGER = logging.getLogger(__name__)
 
 sensorData = {
