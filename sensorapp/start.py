@@ -75,7 +75,7 @@ def node_init():
             time.sleep(10)
             continue
     
-    url = "http://{ip}:{port}/api/nodes/{node_name}".format(ip = network_config["SERVER_IP"], port = network_config["SERVER_PORT"], node_name = node_config['NODE_NAME'])
+    url = "http://{ip}:{port}/api/nodes/{node_name}/sensors".format(ip = network_config["SERVER_IP"], port = network_config["SERVER_PORT"], node_name = node_config['NODE_NAME'])
     #register sensor 
     try:
         response = requests.post(url, json = node_config)
