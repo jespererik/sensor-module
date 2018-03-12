@@ -52,7 +52,7 @@ def start_threads():
     restful_thread.start()
     sensor_thread.start()
 
-def node_init():
+def register_node():
     node_config = read_config_file("/sensor-module/shared/node.conf")
     network_config = read_config_file("/sensor-module/shared/network.conf")
     url = "http://{ip}:{port}/api/nodes".format(ip = network_config["SERVER_IP"], port = network_config["SERVER_PORT"])
@@ -74,16 +74,25 @@ def node_init():
             NODE_LOGGER.error("Host unreachable, retrying connection in 10s\nerror: {}".format(err))
             time.sleep(10)
             continue
-    
-    url = "http://{ip}:{port}/api/nodes/{node_name}/sensors".format(ip = network_config["SERVER_IP"], port = network_config["SERVER_PORT"], node_name = node_config['NODE_NAME'])
-    #register sensor 
-    try:
-        response = requests.post(url, json = node_config)
-        response.raise_for_status()
-    except requests.exceptions.ConnectionError as err:
-        NODE_LOGGER.error("Host unreachable, retrying connection in 10s\nerror: {}".format(err))
-        time.sleep(10)
 
+
+def register_sensor():
+    node_config = read_config_file("/sensor-module/shared/node.conf")
+    network_config = read_config_file("/sensor-module/shared/network.conf")
+    url = "http://{ip}:{port}/api/nodes/{node_name}/sensors".format(ip = network_config["SERVER_IP"], port = network_config["SERVER_PORT"], node_name = node_config['NODE_NAME'])
+    while True:
+        try:
+            response = requests.post(url, json = node_config)
+            response.raise_for_status()
+            break
+        except requests.exceptions.ConnectionError as err:
+            NODE_LOGGER.error("Host unreachable, retrying connection in 10s\nerror: {}".format(err))
+            time.sleep(10)
+            continue
+
+def node_init():
+    register_node()
+    register_sensor()
     start_threads()   
 
 if __name__ == '__main__':
