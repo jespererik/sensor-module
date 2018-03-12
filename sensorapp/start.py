@@ -1,5 +1,5 @@
-from sensorhandler import DHT11DataStream
-from restfulapi  import runRest
+from sensorhandler import sensor_data_stream
+from restfulapi  import run_rest
 import json
 import threading
 import requests
@@ -45,18 +45,18 @@ def write_config_file(filepath, config, new_key, new_value):
     NODE_LOGGER.info('Wrote to new values to {}: keys: {} values: {}'.format(filepath, new_key, new_value))
     config_file.close()
 
-def Start_Threads():
-    restThread = threading.Thread(target = runRest)
-    DHT11Thread = threading.Thread(target = DHT11DataStream)
+def start_threads():
+    restful_thread = threading.Thread(target = run_rest)
+    sensor_thread = threading.Thread(target = sensor_data_stream)
     
-    restThread.start()
-    DHT11Thread.start()
+    restful_thread.start()
+    sensor_thread.start()
 
 def node_init():
     node_config = read_config_file("/sensor-module/shared/node.conf")
     network_config = read_config_file("/sensor-module/shared/network.conf")
     url = "http://{ip}:{port}/api/nodes".format(ip = network_config["SERVER_IP"], port = network_config["SERVER_PORT"])
-
+    #register node
     while True:
         try:
             response = requests.post(url, json = node_config)
@@ -75,7 +75,16 @@ def node_init():
             time.sleep(10)
             continue
     
-    Start_Threads()   
+    url = "http://{ip}:{port}/api/nodes/{node_name}".format(ip = network_config["SERVER_IP"], port = network_config["SERVER_PORT"], node_name = node_config['NODE_NAME'])
+    #register sensor 
+    try:
+        response = requests.post(url, json = node_config)
+        response.raise_for_status()
+    except requests.exceptions.ConnectionError as err:
+        NODE_LOGGER.error("Host unreachable, retrying connection in 10s\nerror: {}".format(err))
+        time.sleep(10)
+
+    start_threads()   
 
 if __name__ == '__main__':
     node_init()

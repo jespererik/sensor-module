@@ -9,7 +9,7 @@ humidity_array      = [0] * SIZE
 temperature_array   = [0] * SIZE
 
 
-def DHT11DataStream():
+def sensor_data_stream():
    while True:
       i = next(indices)
       humidity, temp = Adafruit_DHT.read_retry(11, 4)
@@ -33,8 +33,8 @@ def get_all():
    return (mean(temperature_array), mean(humidity_array))
 
 
-if __name__ == "__main__":
+'''if __name__ == "__main__":
  
-    myThread = threading.Thread(target = DHT11DataStream)
-    myThread.start()
-
+    my_thread = threading.Thread(target = sensor_data_stream)
+    my_thread.start()
+'''

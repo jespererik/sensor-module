@@ -1,9 +1,10 @@
 import threading
 import json
-from sensorhandler import *
+from sensorhandler import get_temperature
 from datetime import datetime
 import requests
 import logging
+import time
 import sys
 
 logging.basicConfig(
@@ -15,54 +16,44 @@ logging.basicConfig(
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 REST_LOGGER = logging.getLogger(__name__)
 
-sensorData = {
-        'NODE_NAME'     :'',
-        'SENSOR_NAME'   :'',
-        'TYPE'          :'',
-        'TIMESTAMP'     :'',
-        'DATA'          :''
-
-    }
-
 def try_file_open(filepath):
     try: 
         open(filepath)
     except IOError:
-        #NODE_LOGGER.error("File does not appear to exist: {}".format(filepath))
+        REST_LOGGER.error("File does not appear to exist: {}".format(filepath))
         sys.exit(1)
-
 
 def read_config_file(filepath):
     try_file_open(filepath)
-    node_config = {} 
-    with open(filepath, "r") as conf_file:
-        for element in conf_file:
+    config_data = {} 
+    with open(filepath, "r") as config_file:
+        for element in config_file:
             key, value = element.strip('\n').split(":")
-            node_config[key] = value
+            config_data[key] = value
     #NODE_LOGGER.info("Read from {}: keys: {} values: {}".format(filepath ,conf_file.iteritems()))
-    conf_file.close()
-    return node_config
+    config_file.close()
+    return config_data
 
 
-def postTemp():
-    node_conf = read_config_file("/sensor-module/shared/node.conf")
-    sensorData['NODE_NAME'] = node_conf["NODE_NAME"]
-    sensorData['TYPE'] = "Temperature"
-    sensorData['SENSOR_NAME'] = "DHT11"
-    url = "http://{ip}:{port}/Temp".format(ip = node_conf["SERVER_IP"], port = node_conf["SERVER_PORT"])
+def post_data():
+    node_config = read_config_file("/sensor-module/shared/node.conf")
+    network_config = read_config_file("/sensor-module/shared/network.conf")
+    sensor_data = node_config
+    #('/api/nodes/<string:node_name>/sensors/<string:sensor_name>/readings'
+    url = "http://{ip}:{port}/api/nodes/{node_name}/sensors/{sensor_name}/readings"\
+        .format(ip = network_config["SERVER_IP"], port = network_config["SERVER_PORT"], node_name = node_config['NODE_NAME'], sensor_name = node_config['SENSOR_NAME'])
     while True:
         try:
-            sensorData['DATA'] = get_temperature()
-            sensorData['TIMESTAMP'] = str(datetime.now())
-            REST_LOGGER.info("Sending reading packet to: {} content: {}".format(url, sensorData))
-            response = requests.post(url, json=sensorData)
+            sensor_data['DATA'] = get_temperature()
+            sensor_data['TIMESTAMP'] = str(datetime.now())
+            REST_LOGGER.info("Sending reading packet to: {} content: {}".format(url, sensor_data))
+            response = requests.post(url, json = sensor_data)
             print(json.loads(response.content))
         except requests.exceptions.ConnectionError as err:
             REST_LOGGER.error("Host unreachable url: {} error: {}".format(url, err))
-            print('Retry')
-            sleep(10)
+            time.sleep(10)
             continue
-        sleep(5)
+        time.sleep(5)
 
-def runRest():  
-    postTemp()
+def run_rest():  
+    post_data()
