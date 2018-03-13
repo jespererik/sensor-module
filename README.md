@@ -4,11 +4,11 @@ To create the image run:
 
 docker build -t sensor-module .
 
-docker run -v ~/sensor-module/shared/:/sensor-module/shared/ --privileged --net=host -ti sensor-module:latest bash
+docker run -v ~/sensor-module/shared/:/sensor-module/shared/ --privileged --net=host -ti -d sensor-module:latest
 
-From bash run:
+To check log run:
 
-python sensorapp/start.py
+tail -f shared/node.log
 
 Stop all containers:
 

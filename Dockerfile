@@ -8,4 +8,4 @@ ADD /sensorapp ./sensorapp
 
 RUN cd sensorapp/Adafruit_Python_DHT && python setup.py install
 RUN pip install requests
-CMD ["python"]
+CMD python sensorapp/start.py
