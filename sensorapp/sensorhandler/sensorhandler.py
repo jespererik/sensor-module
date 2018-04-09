@@ -22,15 +22,16 @@ def mean(iterable):
 
 
 def get_temperature():
-   return mean(temperature_array)
+    print mean(temperature_array)
+    return mean(temperature_array)
 
 
 def get_humidity():
-   return mean(humidity_array)
+    return mean(humidity_array)
 
 
 def get_all():
-   return (mean(temperature_array), mean(humidity_array))
+    return (mean(temperature_array), mean(humidity_array))
 
 
 '''if __name__ == "__main__":

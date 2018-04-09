@@ -1,6 +1,6 @@
 import threading
 import json
-from sensorhandler import get_temperature
+from sensorhandler import sensorhandler
 from datetime import datetime
 import requests
 import logging
@@ -44,7 +44,7 @@ def post_data():
         .format(ip = network_config["SERVER_IP"], port = network_config["SERVER_PORT"], node_name = node_config['NODE_NAME'], sensor_name = node_config['SENSOR_NAME'])
     while True:
         try:
-            sensor_data['DATA'] = get_temperature()
+            sensor_data['DATA'] = sensorhandler.get_temperature()
             sensor_data['TIMESTAMP'] = str(datetime.now())
             REST_LOGGER.info("Sending reading packet to: {} content: {}".format(url, sensor_data))
             response = requests.post(url, json = sensor_data)

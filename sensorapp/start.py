@@ -1,4 +1,4 @@
-from sensorhandler import sensor_data_stream
+from sensorhandler import sensorhandler
 from restfulapi  import run_rest
 import json
 import threading
@@ -47,7 +47,7 @@ def write_config_file(filepath, config, new_key, new_value):
 
 def start_threads():
     restful_thread = threading.Thread(target = run_rest)
-    sensor_thread = threading.Thread(target = sensor_data_stream)
+    sensor_thread = threading.Thread(target = sensorhandler.sensor_data_stream)
     
     restful_thread.start()
     sensor_thread.start()
