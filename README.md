@@ -7,7 +7,7 @@ docker build -t sensor-module .
 
 From sensor-module folder run:
 
-docker run -v ($pwd)/sensor-module/shared:/sensor-module/shared --privileged --net=host -ti -d sensor-module:latest
+docker run -v $(pwd)/shared:/shared --privileged --net=host -ti -d sensor-module:latest
 
 To check log run:
 
