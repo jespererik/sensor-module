@@ -1,11 +1,12 @@
-from sensorhandler import sensorhandler
-from restfulapi  import run_rest
+from ConfigParser import ConfigParser
+import httphandler
 import json
-import threading
+import thread
 import requests
 import sys
 import logging
 import time
+
 
 logging.basicConfig(
     filename = "/sensor-module/shared/node.log",
@@ -16,56 +17,45 @@ logging.basicConfig(
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 NODE_LOGGER = logging.getLogger(__name__)
 
-def try_file_open(filepath):
-    try: 
-        open(filepath)
-    except IOError:
-        NODE_LOGGER.error("File does not appear to exist: {}".format(filepath))
-        sys.exit(1)
-
-def read_config_file(filepath):
-    try_file_open(filepath)
-    config_data = {} 
-    with open(filepath, "r") as config_file:
-        for element in config_file:
-            key, value = element.strip('\n').split(":")
-            config_data[key] = value
-    #NODE_LOGGER.info("Read from {}: keys: {} values: {}".format(filepath ,conf_file.iteritems()))
-    config_file.close()
+def node_json(config):
+    config_data = {
+        "NODE_NAME": config.get("NODE", "NAME"),
+        "LOCATION": config.get("NODE", "LOCATION")
+    }
     return config_data
 
-def write_config_file(filepath, config, new_key, new_value):
-    try_file_open(filepath)
-    with open(filepath, "w") as config_file:
-        for key, value in config.iteritems():
-            if new_key == key:
-                config_file.write(key + ':' + new_value + '\n')
-            else:
-                config_file.write(key + ':' + value + '\n')
-    NODE_LOGGER.info('Wrote to new values to {}: keys: {} values: {}'.format(filepath, new_key, new_value))
-    config_file.close()
+def sensor_json(config, sensor_id):
+    json_data = {
+        "NODE_NAME": config.get("NODE", "NAME"),
+        "SENSOR": sensor_id,
+        "LOCATION": config.get("NODE", "LOCATION")
+    }
+    return json_data
 
 def start_threads():
-    restful_thread = threading.Thread(target = run_rest)
-    sensor_thread = threading.Thread(target = sensorhandler.sensor_data_stream)
-    
-    restful_thread.start()
-    sensor_thread.start()
+    for sensor in config.get("NODE", "SENSORS").split(","):
+        try:
+            thread.start_new_thread(httphandler.run_sensor, (sensor,))
+        except:
+            NODE_LOGGER.error("Failed to Spawn thread for %s", sensor)
+def register_node(config):
 
-def register_node():
-    node_config = read_config_file("/sensor-module/shared/node.conf")
-    network_config = read_config_file("/sensor-module/shared/network.conf")
-    url = "http://{ip}:{port}/api/nodes".format(ip = network_config["SERVER_IP"], port = network_config["SERVER_PORT"])
+    url = "http://{ip}:{port}/api/nodes".format(
+            ip = config.get("NETWORK", "SERVER_IP"), 
+            port = config.get("NETWORK", "SERVER_PORT")
+        )
     #register node
     while True:
         try:
-            response = requests.post(url, json = node_config)
+            response = requests.post(url, json = node_json(config))
             response.raise_for_status()
             response_data = json.loads(response.content)
             NODE_LOGGER.info('init complete')
             
-            if (response_data['NODE_NAME'] !=  node_config['NODE_NAME']):
-                write_config_file("/sensor-module/shared/node.conf", node_config, 'NODE_NAME', response_data['NODE_NAME'])
+            if (response_data['NODE_NAME'] !=  config.get("NODE", "NAME")):
+                config.set("NODE", "NAME", response_data["NODE_NAME"])
+                with open("sensor-module/shared/node.conf", "w") as configfile:
+                    config.write(configfile)
                 NODE_LOGGER.info("Fresh init: NODE_NAME: {}".format(response_data["NODE_NAME"]))
             else:
                 pass
@@ -76,14 +66,16 @@ def register_node():
             continue
 
 
-def register_sensor():
-    node_config = read_config_file("/sensor-module/shared/node.conf")
-    network_config = read_config_file("/sensor-module/shared/network.conf")
-    url = "http://{ip}:{port}/api/nodes/{node_name}/sensors".format(ip = network_config["SERVER_IP"], port = network_config["SERVER_PORT"], node_name = node_config['NODE_NAME'])
+def register_sensor(config):
+    url = "http://{ip}:{port}/api/nodes/{node_name}/sensors".format(
+        ip = config.get("NETWORK", "SERVER_IP"), 
+        port = config.get("NETWORK", "SERVER_PORT"), 
+        node_name = config.get("NODE", "NAME"))
     while True:
         try:
-            response = requests.post(url, json = node_config)
-            response.raise_for_status()
+            for sensor in config.get("NODE", "SENSORS").split(","):
+                response = requests.post(url, json = sensor_json(config, sensor))
+                response.raise_for_status()
             break
         except requests.exceptions.ConnectionError as err:
             NODE_LOGGER.error("Host unreachable, retrying connection in 10s\nerror: {}".format(err))
@@ -91,8 +83,10 @@ def register_sensor():
             continue
 
 def node_init():
-    register_node()
-    register_sensor()
+    config = ConfigParser()
+    config.read("/sensor-module/shared/node.conf")
+    register_node(config)
+    register_sensor(config)
     start_threads()   
 
 if __name__ == '__main__':
