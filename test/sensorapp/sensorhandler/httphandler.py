@@ -1,6 +1,6 @@
 from time import sleep
 from datetime import datetime
-from sensorhandler import get_reading
+from readinghandler import get_reading
 from ConfigParser import ConfigParser
 import thread
 import json
@@ -10,13 +10,20 @@ import time
 import sys
 
 logging.basicConfig(
-    filename = "/sensor-module/shared/node.log",
+    filename = "/sensor-module/test/shared/node.log",
     filemode = 'w',
     level = logging.DEBUG,
-)
 
+)
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 REST_LOGGER = logging.getLogger(__name__)
+
+def auth():
+    data = {
+        "username": "test",
+        "password": "python"
+    }
+    return data
 
 def post_data(reading_type, sensor_pins, json_packet, url):
     json_packet['DATA'] = "%.2f" % get_reading(
@@ -26,7 +33,7 @@ def post_data(reading_type, sensor_pins, json_packet, url):
         )
     json_packet['TIMESTAMP'] = str(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
     REST_LOGGER.info("Sending reading packet to: {} content: {}".format(url, json_packet))
-    response = requests.post(url, json = json_packet)
+    response = requests.post(url, json = json_packet, data = auth())
     print(json.loads(response.content))
     return
 
@@ -37,7 +44,7 @@ def post_handler(config, sensor_id):
         "NODE_NAME": config.get("NODE", "NAME"),
         "SENSOR": sensor_id,
         "LOCATION": config.get("NODE", "LOCATION"),
-        "READING_TYPE" None,
+        "READING_TYPE": None,
         "DATA": None,
         "TIMESTAMP": None
     }
@@ -61,7 +68,7 @@ def post_handler(config, sensor_id):
 
 def run_sensor(sensor_id):
     config = ConfigParser()
-    config.read("sensor-module/shared/node.conf")
+    config.read("sensor-module/test/shared/node.conf")
     post_handler(config, sensor_id)
 
   

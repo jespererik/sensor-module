@@ -1,3 +1,5 @@
+import random
+
 ARRAY_SIZE = 10
 
 def __mean(iterable):
@@ -6,7 +8,7 @@ def __mean(iterable):
 def __process_DHT11(pins, sensor_index = None):
     reading_array = [] * ARRAY_SIZE
     for i in range(0, 10):
-        reading_array[i] = Adafruit_DHT.read_retry(pins[0], pins[1])[sensor_index]
+        reading_array[i] = "%.2f" % random.uniform(-15, 40)
     return reading_array
 
 

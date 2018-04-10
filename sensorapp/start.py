@@ -17,6 +17,13 @@ logging.basicConfig(
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 NODE_LOGGER = logging.getLogger(__name__)
 
+def auth():
+    data = {
+        "j_username": "test",
+        "password": "python"
+    }
+    return data
+
 def node_json(config):
     config_data = {
         "NODE_NAME": config.get("NODE", "NAME"),
@@ -47,7 +54,7 @@ def register_node(config):
     #register node
     while True:
         try:
-            response = requests.post(url, json = node_json(config))
+            response = requests.post(url, json = node_json(config), data = auth())
             response.raise_for_status()
             response_data = json.loads(response.content)
             NODE_LOGGER.info('init complete')
@@ -74,7 +81,7 @@ def register_sensor(config):
     while True:
         try:
             for sensor in config.get("NODE", "SENSORS").split(","):
-                response = requests.post(url, json = sensor_json(config, sensor))
+                response = requests.post(url, json = sensor_json(config, sensor), data = auth())
                 response.raise_for_status()
             break
         except requests.exceptions.ConnectionError as err:
