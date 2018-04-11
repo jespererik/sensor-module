@@ -20,7 +20,7 @@ REST_LOGGER = logging.getLogger(__name__)
 
 def post_data(reading_type, sensor_pins, json_packet, url):
     json_packet['DATA'] = "%.2f" % get_reading(
-        json_packet["SENSOR"],
+        json_packet["SENSOR_NAME"],
         json_packet["READING_TYPE"],
         sensor_pins
         )
@@ -35,7 +35,7 @@ def post_data(reading_type, sensor_pins, json_packet, url):
 def post_handler(config, sensor_id):
     sensor_data = {
         "NODE_NAME": config.get("NODE", "NAME"),
-        "SENSOR": sensor_id,
+        "SENSOR_NAME": sensor_id,
         "LOCATION": config.get("NODE", "LOCATION"),
         "READING_TYPE" None,
         "DATA": None,
