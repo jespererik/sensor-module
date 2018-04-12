@@ -1,34 +1,81 @@
+from datetime import datetime
+import Adafruit_DHT
+import random
+import logging
+import time
+import requests
+
+
+FORMAT = '%(asctime)s - %(module)s - %(funcName)s - %(levelname)s - %(message)s'
+logging.basicConfig(
+    format = FORMAT,
+    filename = "/sensor-module/test/shared/node.log",
+    filemode = 'w',
+    level = logging.DEBUG
+)
+SENSOR_LOGGER = logging.getLogger(__name__)
+
 ARRAY_SIZE = 10
 
-def __mean(iterable):
+
+def mean(iterable):
     return sum(iterable) / len(iterable)
 
-def __process_DHT11(pins, sensor_index = None):
-    reading_array = [] * ARRAY_SIZE
-    for i in range(0, 10):
-        reading_array[i] = Adafruit_DHT.read_retry(pins[0], pins[1])[sensor_index]
-    return reading_array
+
+def start_DHT11_temp(sensor_id, reading_type, GPIO_pins, packet_queue):
+    SENSOR_LOGGER.debug("ENTER")
+    SENSOR_LOGGER.debug("Starting %s on pins %s", sensor_id, GPIO_pins)
+    reading_array = [0] * ARRAY_SIZE
+
+    while True:
+        for i in range(0, ARRAY_SIZE):
+            reading_array[i] = Adafruit_DHT.read_retry(GPIO_pins[0], GPIO_pins[1])[1]
+            time.sleep(0.5)
+        reading_packet = create_packet(sensor_id, reading_type, mean(reading_array))
+        packet_queue.put(reading_packet)
+        SENSOR_LOGGER.debug("Added %s to packet queue", reading_packet)
+
+    SENSOR_LOGGER.debug("EXIT")
+
+def start_DHT11_humi(sensor_id, reading_type, GPIO_pins, packet_queue):
+    SENSOR_LOGGER.debug("ENTER")
+    SENSOR_LOGGER.debug("Starting %s on pins %s", sensor_id, GPIO_pins)
+
+    reading_array = [0] * ARRAY_SIZE
+
+    while True:
+        for i in range(0, ARRAY_SIZE):
+            reading_array[i] = Adafruit_DHT.read_retry(GPIO_pins[0], GPIO_pins[1])[0]
+            time.sleep(0.5)
+        reading_packet = create_packet(sensor_id, reading_type, mean(reading_array))
+        packet_queue.put(reading_packet)
+        SENSOR_LOGGER.debug("Added %s to packet queue", reading_packet)
+
+    SENSOR_LOGGER.debug("EXIT")
+        
+
+def create_packet(sensor_id, reading_type, reading):
+    SENSOR_LOGGER.debug("ENTER")
+    packet = {
+        "SENSOR_ID": sensor_id,
+        "TYPE": reading_type,
+        "DATA": float("%.2f" % reading),
+        "TIMESTAMP": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    }
+    SENSOR_LOGGER.debug("EXIT")
+
+    return packet
 
 
-def get_reading(sensor_id, reading_type, pins):
-    """[Fetches the readings of a sensor]
+def start_sensor(sensor_id, GPIO_pins, reading_type, packet_queue):
+    SENSOR_LOGGER.debug("ENTER")
+    SENSOR_LOGGER.debug("%s %s %s %s", sensor_id, GPIO_pins, reading_type, packet_queue)
+    if sensor_id == "DHT11-Temperature":
+        start_DHT11_temp(sensor_id, reading_type, GPIO_pins, packet_queue)
+    elif sensor_id == "DHT11-Humidity":
+        start_DHT11_humi(sensor_id, reading_type, GPIO_pins, packet_queue)
+
+    SENSOR_LOGGER.debug("EXIT")
     
-    Arguments:
-        sensor_id {[string]} -- [The name of the sensor]
-        reading_type {[type]} -- [The type that is to be gathered]
-        pin1 {[type]} -- [description]
-        pin2 {[type]} -- [description]
-    
-    Returns:
-        [array or bool] --  if the sensor outputs values such as temperature it will return the mean
-                            of 10 values gathered and if its something static like if something is on
-                            or of it will return a bool.
-    """
-
-    if sensor_id == "DHT11":
-        if reading_type == "temperature":
-            return __mean(__process_DHT11(pins, 1))
-        elif reading_type == "humidity":
-            return __mean(__process_DHT11(pins, 0))
 
     
