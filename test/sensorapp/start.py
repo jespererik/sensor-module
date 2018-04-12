@@ -1,12 +1,12 @@
-from ConfigParser import ConfigParser
 from sensorhandler import sensorhandler
+from ConfigParser import ConfigParser
+from Queue import Queue
 import json
 import threading
 import requests
 import sys
 import logging
 import time
-import Queue
 
 FORMAT = '%(asctime)s - %(module)s - %(funcName)s - %(levelname)s - %(message)s'
 logging.basicConfig(
@@ -17,6 +17,8 @@ logging.basicConfig(
 )
 
 NODE_LOGGER = logging.getLogger(__name__)
+
+packet_queue = Queue()
 
 def node_json(config):
     config_data = {
@@ -35,11 +37,13 @@ def sensor_json(config, sensor_id):
 
 def start_threads(sensors, config):
     NODE_LOGGER.debug("ENTER")
-    sensor_thread = threading.Thread(target = sensorhandler.post_handler, args = (config, sensors[0]), name = sensors[0])
-    sensor_thread.start()
-    for sensor_thread in threading.enumerate():
-        if sensor_thread != threading.current_thread():
-            sensor_thread.join()
+    
+    for sensor in sensors:
+        pins = config.get("SENSOR_PINS", sensor)
+        reading_type = config.get("READING_TYPES", sensor)
+        sensor_thread = threading.Thread(target = sensorhandler.start_sensor, args = (sensor, pins, reading_type, packet_queue), name = sensor)
+        sensor_thread.start()
+    
     NODE_LOGGER.debug("EXIT")
 
 
@@ -49,7 +53,6 @@ def register_node(config):
             ip = config.get("NETWORK", "SERVER_IP"), 
             port = config.get("NETWORK", "SERVER_PORT")
         )
-    #register node
     while True:
         try:
             response = requests.post(url, json = node_json(config), auth = (config.get("AUTHORIZATION", "username"),config.get("AUTHORIZATION", "password")))
@@ -73,11 +76,13 @@ def register_node(config):
             continue
     
 
+
 def register_sensor(config):
     url = "http://{ip}:{port}/api/nodes/{node_name}/sensors".format(
-        ip = config.get("NETWORK", "SERVER_IP"), 
-        port = config.get("NETWORK", "SERVER_PORT"), 
-        node_name = config.get("NODE", "NAME"))
+            ip = config.get("NETWORK", "SERVER_IP"), 
+            port = config.get("NETWORK", "SERVER_PORT"), 
+            node_name = config.get("NODE", "NAME")
+        )
     while True:
         try:
             for sensor in config.get("NODE", "SENSORS").split(","):
@@ -88,6 +93,39 @@ def register_sensor(config):
             NODE_LOGGER.error("Host unreachable, retrying connection in 10s\nerror: {}".format(err))
             time.sleep(10)
             continue
+
+def get_route_for_sensor(config, sensor_id):
+    url = "http://{ip}:{port}/api/nodes/{node_name}/sensors/{sensor_name}/readings".format(
+            ip = config.get("NETWORK", "SERVER_IP"), 
+            port = config.get("NETWORK", "SERVER_PORT"), 
+            node_name = config.get("NODE", "NAME"), 
+            sensor_name = sensor_id
+        )
+    return url
+
+def post_reading_packet(json_packet, url, authorization):
+    NODE_LOGGER.debug("ENTER")
+    NODE_LOGGER.info("Sending reading packet to: {} content: {}".format(url, json_packet))
+    requests.post(url, json = json_packet, auth = authorization)
+    NODE_LOGGER.debug("EXIT")
+
+
+def post_handler(config):
+    NODE_LOGGER.debug("ENTER")
+    NODE_LOGGER.debug("%s", packet_queue)
+    auth = (config.get("AUTHORIZATION", "username"),config.get("AUTHORIZATION", "password"))
+
+    while True:
+        packet = packet_queue.get()
+        NODE_LOGGER.debug("Fetched packet %s from packet_queue", packet)
+        url = get_route_for_sensor(config, packet["SENSOR_ID"])
+        try:
+            post_reading_packet(packet, url, auth)
+        except requests.exceptions.ConnectionError as err:
+            NODE_LOGGER.error("Host unreachable url: {} error: {}".format(url, err))
+            time.sleep(10)
+            continue
+    NODE_LOGGER.debug("EXIT")
 
 
 def node_init():
@@ -101,7 +139,8 @@ def node_init():
         register_node(config)
         register_sensor(config)
 
-    start_threads(config.get("NODE", "sensors").split(","), config)   
+    start_threads(config.get("NODE", "sensors").split(","), config)
+    post_handler(config)  
 
 if __name__ == '__main__':
     node_init()
