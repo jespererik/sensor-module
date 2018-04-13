@@ -11,7 +11,7 @@ import time
 FORMAT = '%(asctime)s - %(module)s - %(funcName)s - %(levelname)s - %(message)s'
 logging.basicConfig(
     format = FORMAT,
-    filename = "/sensor-module/test/shared/node.log",
+    filename = "/sensor-module/shared/node.log",
     filemode = 'w',
     level = logging.DEBUG
 )
@@ -39,7 +39,7 @@ def start_threads(sensors, config):
     NODE_LOGGER.debug("ENTER")
     
     for sensor in sensors:
-        pins = config.get("SENSOR_PINS", sensor)
+        pins = config.get("SENSOR_PINS", sensor).split(",")
         reading_type = config.get("READING_TYPES", sensor)
         sensor_thread = threading.Thread(target = sensorhandler.start_sensor, args = (sensor, pins, reading_type, packet_queue), name = sensor)
         sensor_thread.start()
@@ -64,7 +64,7 @@ def register_node(config):
             if (response_data['NODE_NAME'] !=  config.get("NODE", "NAME")):
                 config.set("NODE", "NAME", response_data["NODE_NAME"])
                 config.set("NODE", "init", False)
-                with open("/sensor-module/test/shared/node.conf", "w") as configfile:
+                with open("/sensor-module/shared/node.conf", "w") as configfile:
                     config.write(configfile)
                 NODE_LOGGER.info("Fresh init: NODE_NAME: {}".format(response_data["NODE_NAME"]))
             else:
@@ -130,10 +130,7 @@ def post_handler(config):
 
 def node_init():
     config = ConfigParser()
-    config.read("/sensor-module/test/shared/node.conf")
-
-    if config.get("NODE", "NAME") == "":
-        config.set("NODE", "init", True)
+    config.read("/sensor-module/shared/node.conf")
 
     if config.getboolean("NODE", "init"):
         register_node(config)

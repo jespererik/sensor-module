@@ -9,7 +9,7 @@ import requests
 FORMAT = '%(asctime)s - %(module)s - %(funcName)s - %(levelname)s - %(message)s'
 logging.basicConfig(
     format = FORMAT,
-    filename = "/sensor-module/test/shared/node.log",
+    filename = "/sensor-module/shared/node.log",
     filemode = 'w',
     level = logging.DEBUG
 )
@@ -29,7 +29,7 @@ def start_DHT11_temp(sensor_id, reading_type, GPIO_pins, packet_queue):
 
     while True:
         for i in range(0, ARRAY_SIZE):
-            reading_array[i] = Adafruit_DHT.read_retry(GPIO_pins[0], GPIO_pins[1])[1]
+            reading_array[i] = Adafruit_DHT.read_retry(11, 4)[1]
             time.sleep(0.5)
         reading_packet = create_packet(sensor_id, reading_type, mean(reading_array))
         packet_queue.put(reading_packet)
@@ -45,7 +45,7 @@ def start_DHT11_humi(sensor_id, reading_type, GPIO_pins, packet_queue):
 
     while True:
         for i in range(0, ARRAY_SIZE):
-            reading_array[i] = Adafruit_DHT.read_retry(GPIO_pins[0], GPIO_pins[1])[0]
+            reading_array[i] = Adafruit_DHT.read_retry(11, 4)[0]
             time.sleep(0.5)
         reading_packet = create_packet(sensor_id, reading_type, mean(reading_array))
         packet_queue.put(reading_packet)
