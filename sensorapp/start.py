@@ -49,7 +49,7 @@ def start_threads(sensors, config):
 
 def register_node(config):
 
-    url = "http://{ip}:{port}/api/nodes".format(
+    url = "http://{ip}:{port}/api/v1.0/nodes".format(
             ip = config.get("NETWORK", "SERVER_IP"), 
             port = config.get("NETWORK", "SERVER_PORT")
         )
@@ -81,7 +81,7 @@ def register_node(config):
 
 
 def register_sensor(config):
-    url = "http://{ip}:{port}/api/nodes/{node_name}/sensors".format(
+    url = "http://{ip}:{port}/api/v1.0/nodes/{node_name}/sensors".format(
             ip = config.get("NETWORK", "SERVER_IP"), 
             port = config.get("NETWORK", "SERVER_PORT"), 
             node_name = config.get("NODE", "NAME")
@@ -98,7 +98,7 @@ def register_sensor(config):
             continue
 
 def get_route_for_sensor(config, sensor_id):
-    url = "http://{ip}:{port}/api/nodes/{node_name}/sensors/{sensor_name}/readings".format(
+    url = "http://{ip}:{port}/api/v1.0/nodes/{node_name}/sensors/{sensor_name}/readings".format(
             ip = config.get("NETWORK", "SERVER_IP"), 
             port = config.get("NETWORK", "SERVER_PORT"), 
             node_name = config.get("NODE", "NAME"), 
