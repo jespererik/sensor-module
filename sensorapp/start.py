@@ -59,16 +59,19 @@ def register_node(config):
             response.raise_for_status()
             NODE_LOGGER.debug('init response %s', response.content)
             response_data = json.loads(response.content)
+            print response_data
             NODE_LOGGER.info('init complete')
             
-            if (response_data['NODE_NAME'] !=  config.get("NODE", "NAME")):
-                config.set("NODE", "NAME", response_data["NODE_NAME"])
+            '''if (response_data['NODE_NAME'] !=  config.get("NODE", "NAME")):
+                node_name = response_data["NODE_NAME"]
+                config.set("NODE", "NAME", node_name)
                 config.set("NODE", "init", False)
                 with open("/sensor-module/shared/node.conf", "w") as configfile:
                     config.write(configfile)
                 NODE_LOGGER.info("Fresh init: NODE_NAME: {}".format(response_data["NODE_NAME"]))
             else:
                 pass
+            '''
             break
         except requests.exceptions.ConnectionError as err:
             NODE_LOGGER.error("Host unreachable, retrying connection in 10s\nerror: {}".format(err))
@@ -132,9 +135,9 @@ def node_init():
     config = ConfigParser()
     config.read("/sensor-module/shared/node.conf")
 
-    if config.getboolean("NODE", "init"):
-        register_node(config)
-        register_sensor(config)
+    #if config.getboolean("NODE", "init"):
+    register_node(config)
+    register_sensor(config)
 
     start_threads(config.get("NODE", "sensors").split(","), config)
     post_handler(config)  
