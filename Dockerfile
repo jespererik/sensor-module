@@ -2,9 +2,7 @@ FROM python:2
 
 WORKDIR /sensor-module
 
-ADD /shared ./shared
-COPY /shared ./shared
-ADD /sensorapp ./sensorapp
+ADD . .
 
 RUN cd sensorapp/sensorhandler/Adafruit_Python_DHT && python setup.py install
 RUN pip install requests

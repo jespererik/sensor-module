@@ -1,9 +1,10 @@
 from datetime import datetime
-import Adafruit_DHT
 import random
 import logging
 import time
 import requests
+''' import libraries for sensors here '''
+import Adafruit_DHT
 
 
 FORMAT = '%(asctime)s - %(module)s - %(funcName)s - %(levelname)s - %(message)s'

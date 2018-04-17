@@ -7,7 +7,7 @@ docker build -t sensor-module .
 
 From sensor-module folder run:
 
-docker run -v $(pwd)/shared:/shared --privileged --net=host -ti -d --restart unless-stopped sensor-module:latest
+docker run -v $(pwd)/shared:/sensor-module/shared --privileged --net=host -ti -d --restart unless-stopped sensor-module:latest
 
 To check log run:
 
