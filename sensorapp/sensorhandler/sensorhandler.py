@@ -30,7 +30,7 @@ def start_DHT11_temp(sensor_id, reading_type, GPIO_pins, packet_queue):
 
     while True:
         for i in range(0, ARRAY_SIZE):
-            reading_array[i] = Adafruit_DHT.read_retry(11, 4)[1]
+            reading_array[i] = Adafruit_DHT.read_retry(int(GPIO_pins[0]), int(GPIO_pins[1])[1]
             time.sleep(0.5)
         reading_packet = create_packet(sensor_id, reading_type, mean(reading_array))
         packet_queue.put(reading_packet)
@@ -46,7 +46,7 @@ def start_DHT11_humi(sensor_id, reading_type, GPIO_pins, packet_queue):
 
     while True:
         for i in range(0, ARRAY_SIZE):
-            reading_array[i] = Adafruit_DHT.read_retry(11, 4)[0]
+            reading_array[i] = Adafruit_DHT.read_retry(int(GPIO_pins[0]), int(GPIO_pins[1]))[0]
             time.sleep(0.5)
         reading_packet = create_packet(sensor_id, reading_type, mean(reading_array))
         packet_queue.put(reading_packet)
