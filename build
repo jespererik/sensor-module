@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+python install.py
+(docker build -t sensor-module . && docker run -v $(pwd)/shared:/sensor-module/shared --privileged --net=host -ti -d --restart unless-stopped -e TZ=Europe/Stockholm sensor-module:latest)
