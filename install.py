@@ -84,10 +84,10 @@ def main():
 
     config.set("NODE", "NAME", node_name)
     config.set("NODE", "SENSORS", sensor_names)
-    config.set("NODE", "LOCATION", node_name)
+    config.set("NODE", "LOCATION", node_location)
 
-    config.set("NETWORK", "SERVER_IP", node_name)
-    config.set("NETWORK", "SERVER_PORT", sensor_names)
+    config.set("NETWORK", "SERVER_IP", server_ip)
+    config.set("NETWORK", "SERVER_PORT", server_port)
 
     for sensor, pins, reading_type in zip(sensor_names.split(","), sensor_pins, reading_types):
         config.set("SENSOR_PINS", sensor, pins)
